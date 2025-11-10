@@ -17,7 +17,7 @@ PORT = 11746
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 s.bind(("", PORT))
-VERSION = "2.7 BETA"
+VERSION = "2.8 BETA"
 VERSION_URL = "https://raw.githubusercontent.com/Davidka4444/DavidX/main/version.txt"
 SCRIPT_URL = "https://raw.githubusercontent.com/Davidka4444/DavidX/main/main.py"
 
@@ -79,34 +79,28 @@ class DavidX(App):
 		elif event.input is self.usernameInput:
 			username = event.value
 			self.usernameInput.remove()
-			joinMsg = f"[SERVER] {username} заходит"
+			joinMsg = f"[SERVER] {username} заходит!"
 			s.sendto(joinMsg.encode(), ('255.255.255.255', PORT))
 
 def check_update():
-    try:
-        latest = requests.get(VERSION_URL, timeout=5).text.strip()
-        if latest != VERSION:
-            console.print(f"[orange bold]Доступна новая версия ({latest})! Обновляюсь... [/orange bold]")
-            new_code = requests.get(SCRIPT_URL, timeout=10).text
-            new_code = new_code.replace('\r', '')
-            with open(sys.argv[0], "w", encoding="utf-8") as f:
-                f.write(new_code)
-            console.print("[green bold]Обновление установлено. Перезапуск...[/green bold]")
-            time.sleep(2)
+	try:
+		latest = requests.get(VERSION_URL, timeout=5).text.strip()
+		if latest != VERSION:
+			console.print(f"[orange bold]Доступна новая версия ({latest})! Обновляюсь... [/orange bold]")
+			new_code = requests.get(SCRIPT_URL, timeout=10).text
+			new_code = new_code.replace('\r', '')
+			with open(sys.argv[0], "w", encoding="utf-8") as f:
+				f.write(new_code)
+			console.print("[green bold]Обновление установлено. Перезапуск...[/green bold]")
+			time.sleep(2)
 			console.clear()
-            os.execl(sys.executable, sys.executable, *sys.argv)
-        else:
-            console.print("[green bold]Это актуальная версия[/green bold]")
-    except Exception as e:
-        console.print("[red bold]Ошибка проверки обновлений:", e)
-    time.sleep(2)
+			os.execl(sys.executable, sys.executable, *sys.argv)
+		else:
+			console.print("[green bold]Это актуальная версия[/green bold]")
+	except Exception as e:
+		console.print("[red bold]Ошибка проверки обновлений:", e)
+	time.sleep(2)
 
 if __name__ == "__main__":
 	check_update()
 	DavidX().run()
-
-
-
-
-
-
