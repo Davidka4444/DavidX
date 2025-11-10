@@ -17,7 +17,7 @@ PORT = 11746
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 s.bind(("", PORT))
-VERSION = "2.6 BETA"
+VERSION = "2.7 BETA"
 VERSION_URL = "https://raw.githubusercontent.com/Davidka4444/DavidX/main/version.txt"
 SCRIPT_URL = "https://raw.githubusercontent.com/Davidka4444/DavidX/main/main.py"
 
@@ -104,6 +104,7 @@ def check_update():
 if __name__ == "__main__":
 	check_update()
 	DavidX().run()
+
 
 
 
