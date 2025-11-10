@@ -35,9 +35,9 @@ class DavidX(App):
 [green]$$    $$/ $$    $$ |   $$$/    $$ |$$    $$ |/  |$$ |$$ |  $$ |$$       |[/green]
 [green]$$$$$$$/   $$$$$$$/     $/     $$/  $$$$$$$/ $$/ $$/ $$/   $$/  $$$$$$$/[/green]
 """))
-		self.usernameInput = Input(placeholder="Ваш ник", type="text", max_length=16)
+		self.usernameInput = Input(placeholder="Ваш ник", type="text", max_length=2048)
 		self.messagesWidget = Static(Panel(""))
-		self.msgInput = Input(placeholder="Введите сообщение...", type="text", max_length=256, classes="comment-important")
+		self.msgInput = Input(placeholder="Введите сообщение...", type="text", max_length=2048, classes="comment-important")
 		self.versionWidget = Static(Panel(f"Версия: {VERSION}"))
 		self.footer = Footer()
 
@@ -104,4 +104,5 @@ def check_update():
 if __name__ == "__main__":
 	check_update()
 	DavidX().run()
+
 
