@@ -57,7 +57,7 @@ $$$$$$$/   $$$$$$$/     $/     $$/  $$$$$$$/ $$/ $$/ $$/   $$/  $$$$$$$/
 			try:
 				data, addr = s.recvfrom(1024)
 				received = data.decode()
-				if not and(received.startswith("[" + username + "]"), received.startswith("[SERVER] " + username)):
+				if not received.startswith("[" + username + "]") and not received.startswith("[SERVER] " + username):
 					messages.append(received)
 					self.refresh_messages()
 			except Exception as e:
@@ -102,3 +102,4 @@ def check_update():
 if __name__ == "__main__":
 	check_update()
 	DavidX().run()
+
