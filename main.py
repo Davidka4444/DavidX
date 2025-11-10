@@ -3,6 +3,7 @@ from textual.widgets import Header, Footer, Static, Input
 from textual.containers import Container
 from rich.panel import Panel
 from rich.console import Console
+from rich import *
 import socket
 import threading
 import time
@@ -17,7 +18,7 @@ PORT = 11746
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 s.bind(("", PORT))
-VERSION = "2.9 BETA"
+VERSION = "3.0 BETA"
 VERSION_URL = "https://raw.githubusercontent.com/Davidka4444/DavidX/main/version.txt"
 SCRIPT_URL = "https://raw.githubusercontent.com/Davidka4444/DavidX/main/main.py"
 
@@ -104,5 +105,6 @@ def check_update():
 if __name__ == "__main__":
 	check_update()
 	DavidX().run()
+
 
 
