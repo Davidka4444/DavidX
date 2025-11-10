@@ -12,7 +12,7 @@ import sys
 import os
 
 console = Console()
-messages = []
+messages = ["[LOCAL] Добро пожаловать в чат!"]
 username = "Неизвестный пользователь"
 PORT = 11746
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -39,7 +39,7 @@ class DavidX(App):
 		self.usernameInput = Input(placeholder="Ваш ник", type="text", max_length=2048)
 		self.messagesWidget = Static(Panel(""))
 		self.msgInput = Input(placeholder="Введите сообщение...", type="text", max_length=2048, classes="comment-important")
-		self.versionWidget = Static(Panel(f"Версия: {VERSION}"))
+		self.versionWidget = Static(Panel(f"Версия: [bold yellow]{VERSION}[/bold yellow]"))
 		self.footer = Footer()
 
 		yield self.header
@@ -58,11 +58,11 @@ class DavidX(App):
 			try:
 				data, addr = s.recvfrom(1024)
 				received = data.decode()
-				if not received.startswith("[" + username + "]") and not received.startswith("[SERVER] " + username):
+				if not received.startswith("[" + username + "]") and not received.startswith("[SERVER] [yellow bold]" + username):
 					messages.append(received)
 					self.refresh_messages()
 			except Exception as e:
-				console.print(f"Ошибка получения данных: {e}")
+				console.print(f"Ошибка получения данных: [red bold]{e}[/red bold]")
 
 	def refresh_messages(self):
 		last_messages = "\n".join(messages[-10:])
@@ -80,7 +80,7 @@ class DavidX(App):
 		elif event.input is self.usernameInput:
 			username = event.value
 			self.usernameInput.remove()
-			joinMsg = f"[SERVER] {username} заходит!"
+			joinMsg = f"[SERVER] [yellow bold]{username}[/yellow bold] заходит!"
 			s.sendto(joinMsg.encode(), ('255.255.255.255', PORT))
 
 def check_update():
@@ -99,12 +99,13 @@ def check_update():
 		else:
 			console.print("[green bold]Это актуальная версия[/green bold]")
 	except Exception as e:
-		console.print("[red bold]Ошибка проверки обновлений:", e)
+		console.print(f"Ошибка проверки обновлений: [red bold]{e}[/red bold]")
 	time.sleep(2)
 
 if __name__ == "__main__":
 	check_update()
 	DavidX().run()
+
 
 
 
