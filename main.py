@@ -15,10 +15,11 @@ PORT = 11746
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 s.bind(("", PORT))
-VERSION_URL = "" # Это для обновления. Для форков можно менять
+VERSION = "2.1 BETA"
+VERSION_URL = "https://github.com/Davidka4444/DavidX/blob/main/version.txt"
+SCRIPT_URL = "https://github.com/Davidka4444/DavidX/blob/main/main.py"
 
 class DavidX(App):
-
 	def compose(self) -> ComposeResult:
 		self.header = Header()
 		self.logo = Static(Panel("""
@@ -35,6 +36,7 @@ $$$$$$$/   $$$$$$$/     $/     $$/  $$$$$$$/ $$/ $$/ $$/   $$/  $$$$$$$/
 		self.usernameInput = Input(placeholder="Ваш ник", type="text", max_length=16)
 		self.messagesWidget = Static(Panel(""))
 		self.msgInput = Input(placeholder="Введите сообщение...", type="text", max_length=256, classes="comment-important")
+		self.versionWidget = Static(Panel(f"Версия: {VERSION}"))
 		self.footer = Footer()
 
 		yield self.header
@@ -42,6 +44,7 @@ $$$$$$$/   $$$$$$$/     $/     $$/  $$$$$$$/ $$/ $$/ $$/   $$/  $$$$$$$/
 		yield self.usernameInput
 		yield self.messagesWidget
 		yield self.msgInput
+		yield self.versionWidget
 		yield self.footer
 
 	def on_mount(self) -> None:
