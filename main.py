@@ -17,7 +17,7 @@ PORT = 11746
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 s.bind(("", PORT))
-VERSION = "2.3 BETA"
+VERSION = "2.4 BETA"
 VERSION_URL = "https://raw.githubusercontent.com/Davidka4444/DavidX/main/version.py"
 SCRIPT_URL = "https://raw.githubusercontent.com/Davidka4444/DavidX/main/main.py"
 
@@ -88,7 +88,7 @@ def check_update():
         if latest != VERSION:
             print(f"[orange bold]Доступна новая версия ({latest})! Обновляюсь... [orange bold]")
             new_code = requests.get(SCRIPT_URL, timeout=10).text
-			new_code = new_code.replace('\r', '')
+            new_code = new_code.replace('\r', '')
             with open(sys.argv[0], "w", encoding="utf-8") as f:
                 f.write(new_code)
             print("[green bold]Обновление установлено. Перезапуск...[/green bold]")
@@ -102,5 +102,6 @@ def check_update():
 if __name__ == "__main__":
 	check_update()
 	DavidX().run()
+
 
 
