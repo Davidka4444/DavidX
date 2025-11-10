@@ -86,12 +86,12 @@ def check_update():
     try:
         latest = requests.get(VERSION_URL, timeout=5).text.strip()
         if latest != VERSION:
-            print(f"[orange bold]Доступна новая версия ({latest})! Обновляюсь... [orange bold]")
+            console.print(f"[orange bold]Доступна новая версия ({latest})! Обновляюсь... [orange bold]")
             new_code = requests.get(SCRIPT_URL, timeout=10).text
             new_code = new_code.replace('\r', '')
             with open(sys.argv[0], "w", encoding="utf-8") as f:
                 f.write(new_code)
-            print("[green bold]Обновление установлено. Перезапуск...[/green bold]")
+            console.print("[green bold]Обновление установлено. Перезапуск...[/green bold]")
             os.execl(sys.executable, sys.executable, *sys.argv)
         else:
             console.print("[green bold]Это актуальная версия[/green bold]")
@@ -102,4 +102,5 @@ def check_update():
 if __name__ == "__main__":
 	check_update()
 	DavidX().run()
+
 
