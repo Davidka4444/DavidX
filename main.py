@@ -7,6 +7,8 @@ import socket
 import threading
 import time
 import requests
+import sys
+import os
 
 console = Console()
 messages = []
