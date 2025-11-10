@@ -1,18 +1,17 @@
 from textual.app import App, ComposeResult
 from textual.widgets import Header, Footer, Static, Input
-from textual.containers import Container
 from rich.panel import Panel
 from rich.console import Console
-from rich import *
 import socket
 import threading
 import time
 import requests
 import sys
 import os
+import openai
 
 console = Console()
-messages = ["[LOCAL] Добро пожаловать в чат!"]
+messages = ["[gray][LOCAL] Добро пожаловать в чат! Попробуйте нашего нового ИИ-бота! Чтобы написать ему в начале своего сообщения напишите @AI (например, \"@AI Привет\")[/gray]"]
 username = "Неизвестный пользователь"
 PORT = 11746
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -23,9 +22,9 @@ VERSION_URL = "https://raw.githubusercontent.com/Davidka4444/DavidX/main/version
 SCRIPT_URL = "https://raw.githubusercontent.com/Davidka4444/DavidX/main/main.py"
 
 class DavidX(App):
-	def compose(self) -> ComposeResult:
-		self.header = Header()
-		self.logo = Static(Panel("""
+    def compose(self) -> ComposeResult:
+        self.header = Header()
+        self.logo = Static(Panel("""
 [green] _______                        __        __      __                      [/green]
 [green]/       \\                      /  |      /  |    /  |                    [/green]
 [green]$$$$$$$  |  ______   __     __ $$/   ____$$ |    $$/  _______    _______ [/green]
@@ -36,76 +35,97 @@ class DavidX(App):
 [green]$$    $$/ $$    $$ |   $$$/    $$ |$$    $$ |/  |$$ |$$ |  $$ |$$       |[/green]
 [green]$$$$$$$/   $$$$$$$/     $/     $$/  $$$$$$$/ $$/ $$/ $$/   $$/  $$$$$$$/[/green]
 """))
-		self.usernameInput = Input(placeholder="Ваш ник", type="text", max_length=2048)
-		self.messagesWidget = Static(Panel(""))
-		self.msgInput = Input(placeholder="Введите сообщение...", type="text", max_length=2048, classes="comment-important")
-		self.versionWidget = Static(Panel(f"Версия: [bold yellow]{VERSION}[/bold yellow]"))
-		self.footer = Footer()
+        self.usernameInput = Input(placeholder="Ваш ник", type="text", max_length=2048)
+        self.messagesWidget = Static(Panel(""))
+        self.msgInput = Input(placeholder="Введите сообщение...", type="text", max_length=2048, classes="comment-important")
+        self.versionWidget = Static(Panel(f"Версия: [bold yellow]{VERSION}[/bold yellow]"))
+        self.footer = Footer()
 
-		yield self.header
-		yield self.logo
-		yield self.usernameInput
-		yield self.messagesWidget
-		yield self.msgInput
-		yield self.versionWidget
-		yield self.footer
+        yield self.header
+        yield self.logo
+        yield self.usernameInput
+        yield self.messagesWidget
+        yield self.msgInput
+        yield self.versionWidget
+        yield self.footer
 
-	def on_mount(self) -> None:
-		threading.Thread(target=self.listener_thread, daemon=True).start()
+    def on_mount(self) -> None:
+        threading.Thread(target=self.listener_thread, daemon=True).start()
 
-	def listener_thread(self):
-		while True:
-			try:
-				data, addr = s.recvfrom(1024)
-				received = data.decode()
-				if not received.startswith("[" + username + "]") and not received.startswith("[SERVER] [yellow bold]" + username):
-					messages.append(received)
-					self.refresh_messages()
-			except Exception as e:
-				console.print(f"Ошибка получения данных: [red bold]{e}[/red bold]")
+    def listener_thread(self):
+        while True:
+            try:
+                data, addr = s.recvfrom(1024)
+                received = data.decode()
+                if not received.startswith(f"[{username}]") and not received.startswith(f"[SERVER] [yellow bold]{username}"):
+                    messages.append(received)
+                    self.refresh_messages()
+            except Exception as e:
+                console.print(f"Ошибка получения данных: [red bold]{e}[/red bold]")
 
-	def refresh_messages(self):
-		last_messages = "\n".join(messages[-10:])
-		self.messagesWidget.update(Panel(last_messages))
+    def refresh_messages(self):
+        last_messages = "\n".join(messages[-10:])
+        self.messagesWidget.update(Panel(last_messages))
 
-	async def on_input_submitted(self, event: Input.Submitted) -> None:
-		global username
+    async def on_input_submitted(self, event: Input.Submitted) -> None:
+        global username
 
-		if event.input is self.msgInput:
-			message_text = f"[{username}]: {event.value}"
-			messages.append(message_text)
-			self.refresh_messages()
-			self.msgInput.value = ""
-			s.sendto(message_text.encode(), ('255.255.255.255', PORT))
-		elif event.input is self.usernameInput:
-			username = event.value
-			self.usernameInput.remove()
-			joinMsg = f"[SERVER] [yellow bold]{username}[/yellow bold] заходит!"
-			s.sendto(joinMsg.encode(), ('255.255.255.255', PORT))
+        if event.input is self.msgInput:
+            message_text = f"[{username}]: {event.value}"
+            messages.append(message_text)
+            self.refresh_messages()
+            self.msgInput.value = ""
+
+            if event.value.startswith("@AI "):
+                user_msg = event.value[4:]
+                messages_for_ai = [{"role": "user", "content": user_msg}]
+                try:
+                    reply = ask_ai(messages_for_ai)
+                    ai_message = f"[AI]: {reply}"
+                    messages.append(ai_message)
+                    self.refresh_messages()
+                except Exception as e:
+                    console.print(f"Ошибка ИИ: [red bold]{e}[/red bold]")
+            else:
+                s.sendto(message_text.encode(), ('255.255.255.255', PORT))
+
+        elif event.input is self.usernameInput:
+            username = event.value
+            self.usernameInput.remove()
+            joinMsg = f"[SERVER] [yellow bold]{username}[/yellow bold] заходит!"
+            s.sendto(joinMsg.encode(), ('255.255.255.255', PORT))
+
 
 def check_update():
-	try:
-		latest = requests.get(VERSION_URL, timeout=5).text.strip()
-		if latest != VERSION:
-			console.print(f"[orange bold]Доступна новая версия ({latest})! Обновляюсь... [/orange bold]")
-			new_code = requests.get(SCRIPT_URL, timeout=10).text
-			new_code = new_code.replace('\r', '')
-			with open(sys.argv[0], "w", encoding="utf-8") as f:
-				f.write(new_code)
-			console.print("[green bold]Обновление установлено. Перезапуск...[/green bold]")
-			time.sleep(2)
-			console.clear()
-			os.execl(sys.executable, sys.executable, *sys.argv)
-		else:
-			console.print("[green bold]Это актуальная версия[/green bold]")
-	except Exception as e:
-		console.print(f"Ошибка проверки обновлений: [red bold]{e}[/red bold]")
-	time.sleep(2)
+    try:
+        latest = requests.get(VERSION_URL, timeout=5).text.strip()
+        if latest != VERSION:
+            console.print(f"[orange bold]Доступна новая версия ({latest})! Обновляюсь... [/orange bold]")
+            new_code = requests.get(SCRIPT_URL, timeout=10).text
+            new_code = new_code.replace('\r', '')
+            with open(sys.argv[0], "w", encoding="utf-8") as f:
+                f.write(new_code)
+            console.print("[green bold]Обновление установлено. Перезапуск...[/green bold]")
+            time.sleep(2)
+            console.clear()
+            os.execl(sys.executable, sys.executable, *sys.argv)
+        else:
+            console.print("[green bold]Это актуальная версия[/green bold]")
+    except Exception as e:
+        console.print(f"Ошибка проверки обновлений: [red bold]{e}[/red bold]")
+    time.sleep(2)
+
+
+def ask_ai(messages):
+    resp = openai.ChatCompletion.create(
+        model="gpt-oss-120b",
+        messages=messages,
+        max_tokens=512,
+        temperature=0.7,
+    )
+    return resp.choices[0].message.content
+
 
 if __name__ == "__main__":
-	check_update()
-	DavidX().run()
-
-
-
-
+    check_update()
+    DavidX().run()
