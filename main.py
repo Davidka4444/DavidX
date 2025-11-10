@@ -18,8 +18,8 @@ s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 s.bind(("", PORT))
 VERSION = "2.1 BETA"
-VERSION_URL = "https://github.com/Davidka4444/DavidX/blob/main/version.txt"
-SCRIPT_URL = "https://github.com/Davidka4444/DavidX/blob/main/main.py"
+VERSION_URL = "https://raw.githubusercontent.com/Davidka4444/DavidX/refs/heads/main/version.txt"
+SCRIPT_URL = "https://raw.githubusercontent.com/Davidka4444/DavidX/refs/heads/main/main.py"
 
 class DavidX(App):
 	def compose(self) -> ComposeResult:
