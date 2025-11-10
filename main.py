@@ -92,7 +92,7 @@ def check_update():
             with open(sys.argv[0], "w", encoding="utf-8") as f:
                 f.write(new_code)
             console.print("[green bold]Обновление установлено. Перезапуск...[/green bold]")
-			time.sleep(2)
+            time.sleep(2)
 			console.clear()
             os.execl(sys.executable, sys.executable, *sys.argv)
         else:
@@ -104,6 +104,7 @@ def check_update():
 if __name__ == "__main__":
 	check_update()
 	DavidX().run()
+
 
 
 
