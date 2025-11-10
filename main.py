@@ -17,7 +17,7 @@ PORT = 11746
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 s.bind(("", PORT))
-VERSION = "2.5 BETA"
+VERSION = "2.6 BETA"
 VERSION_URL = "https://raw.githubusercontent.com/Davidka4444/DavidX/main/version.txt"
 SCRIPT_URL = "https://raw.githubusercontent.com/Davidka4444/DavidX/main/main.py"
 
@@ -25,15 +25,15 @@ class DavidX(App):
 	def compose(self) -> ComposeResult:
 		self.header = Header()
 		self.logo = Static(Panel("""
- _______                        __        __      __                      
-/       \\                      /  |      /  |    /  |                    
-$$$$$$$  |  ______   __     __ $$/   ____$$ |    $$/  _______    _______ 
-$$ |  $$ | /      \\ /  \\   /  |/  | /    $$ |    /  |/       \\  /       |
-$$ |  $$ | $$$$$$  |$$  \\ /$$/ $$ |/$$$$$$$ |    $$ |$$$$$$$  |/$$$$$$$/ 
-$$ |  $$ | /    $$ | $$  /$$/  $$ |$$ |  $$ |    $$ |$$ |  $$ |$$ |      
-$$ |__$$ |/$$$$$$$ |  $$ $$/   $$ |$$ \\__$$ | __ $$ |$$ |  $$ |$$ \\_____ 
-$$    $$/ $$    $$ |   $$$/    $$ |$$    $$ |/  |$$ |$$ |  $$ |$$       |
-$$$$$$$/   $$$$$$$/     $/     $$/  $$$$$$$/ $$/ $$/ $$/   $$/  $$$$$$$/
+[green] _______                        __        __      __                      [/green]
+[green]/       \\                      /  |      /  |    /  |                    [/green]
+[green]$$$$$$$  |  ______   __     __ $$/   ____$$ |    $$/  _______    _______ [/green]
+[green]$$ |  $$ | /      \\ /  \\   /  |/  | /    $$ |    /  |/       \\  /       |[/green]
+[green]$$ |  $$ | $$$$$$  |$$  \\ /$$/ $$ |/$$$$$$$ |    $$ |$$$$$$$  |/$$$$$$$/ [/green]
+[green]$$ |  $$ | /    $$ | $$  /$$/  $$ |$$ |  $$ |    $$ |$$ |  $$ |$$ |      [/green]
+[green]$$ |__$$ |/$$$$$$$ |  $$ $$/   $$ |$$ \\__$$ | __ $$ |$$ |  $$ |$$ \\_____ [/green]
+[green]$$    $$/ $$    $$ |   $$$/    $$ |$$    $$ |/  |$$ |$$ |  $$ |$$       |[/green]
+[green]$$$$$$$/   $$$$$$$/     $/     $$/  $$$$$$$/ $$/ $$/ $$/   $$/  $$$$$$$/[/green]
 """))
 		self.usernameInput = Input(placeholder="Ваш ник", type="text", max_length=16)
 		self.messagesWidget = Static(Panel(""))
@@ -102,5 +102,6 @@ def check_update():
 if __name__ == "__main__":
 	check_update()
 	DavidX().run()
+
 
 
